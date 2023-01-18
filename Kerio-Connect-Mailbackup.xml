@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.2</version>
+    <date>2023-01-18T22:49:07Z</date>
+    <template_groups>
+        <template_group>
+            <uuid>3752a4f3c1b84235903bf3a07232320c</uuid>
+            <name>Kerio</name>
+        </template_group>
+    </template_groups>
+    <templates>
+        <template>
+            <uuid>d3f8e13164df4d48b0d3432d8edf1790</uuid>
+            <template>Kerio Backup Check</template>
+            <name>Kerio Backup Check</name>
+            <description>Kerio Connect Mailserver Backup Check</description>
+            <groups>
+                <group>
+                    <name>Kerio</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>35bf753a680042b58ba7373832b722ae</uuid>
+                    <name>Kerio Backup Fail on  {HOST.NAME}</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>log[/var/log/syslog,&quot;backup has failed with error&quot;]</key>
+                    <delay>30s</delay>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                </item>
+                <item>
+                    <uuid>f18e0d187aa84c8e827790d109ad6565</uuid>
+                    <name>Kerio Finished on  {HOST.NAME}</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>log[/var/log/syslog,&quot;Backup job finished&quot;]</key>
+                    <delay>30s</delay>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <triggers>
+                        <trigger>
+                            <uuid>a9a52ef03955452b8819f2ec3ef3c3af</uuid>
+                            <expression>count(/Kerio Backup Check/log[/var/log/syslog,&quot;Backup job finished&quot;],#1)=1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>count(/Kerio Backup Check/log[/var/log/syslog,&quot;Backup job finished&quot;],#1)&lt;1</recovery_expression>
+                            <name>Kerio Mailbackup Erfolgreich</name>
+                            <priority>INFO</priority>
+                            <description>{HOST.NAME}</description>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <tags>
+                <tag>
+                    <tag>Application</tag>
+                    <value>Kerio Connect</value>
+                </tag>
+                <tag>
+                    <tag>Kerio</tag>
+                    <value>Kerio</value>
+                </tag>
+                <tag>
+                    <tag>Mailbackup Kerio</tag>
+                    <value>Mailbackup Kerio</value>
+                </tag>
+            </tags>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <uuid>ee2c06092b2f45b1aa669e657679a21e</uuid>
+            <expression>count(/Kerio Backup Check/log[/var/log/syslog,&quot;backup has failed with error&quot;],1)=1</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>count(/Kerio Backup Check/log[/var/log/syslog,&quot;Backup job finished&quot;],#1)=1</recovery_expression>
+            <name>Kerio Mailbackup Failed on  {HOST.NAME}</name>
+            <priority>DISASTER</priority>
+            <description>{HOST.NAME}</description>
+        </trigger>
+    </triggers>
+</zabbix_export>
